@@ -38,7 +38,7 @@ export default function App() {
   const [paymentError, setPaymentError] = useState<string>('');
   const [isProcessingPayment, setIsProcessingPayment] = useState<boolean>(false);
 
-  const API_BASE = '/api';
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
   const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Tedpk5ARFyZh2i';
 
   useEffect(() => {
