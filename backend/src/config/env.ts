@@ -8,8 +8,8 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:postgrespassword@localhost:5432/meterforge',
   razorpay: {
-    keyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder_key_id',
-    keySecret: process.env.RAZORPAY_KEY_SECRET || 'rzp_test_placeholder_key_secret',
+    keyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_Tedpk5ARFyZh2i',
+    keySecret: process.env.RAZORPAY_KEY_SECRET || 'LxHPlz160j60IBpflPnDZqAh',
     webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || 'whsec_razorpay_test_secret_placeholder',
   },
 };
