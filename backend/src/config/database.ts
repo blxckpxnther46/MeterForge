@@ -9,7 +9,6 @@ export interface QueryResult {
 let pgPool: Pool | null = null;
 let useMemStore = process.env.USE_SQLITE === 'true';
 
-// In-memory JavaScript tables for zero-dependency execution fallback
 const memDb: Record<string, any[]> = {
   tenants: [],
   plans: [],
@@ -19,15 +18,20 @@ const memDb: Record<string, any[]> = {
 };
 
 export async function query(text: string, params: any[] = []): Promise<QueryResult> {
-  // Try PostgreSQL if pool available and not forced to memory mode
   if (!useMemStore) {
     if (!pgPool) {
       try {
+        const isNeonOrSsl =
+          config.databaseUrl.includes('neon.tech') ||
+          config.databaseUrl.includes('sslmode=require') ||
+          config.databaseUrl.includes('ssl=true');
+
         pgPool = new Pool({
           connectionString: config.databaseUrl,
+          ssl: isNeonOrSsl ? { rejectUnauthorized: false } : undefined,
           max: 10,
-          idleTimeoutMillis: 5000,
-          connectionTimeoutMillis: 1000,
+          idleTimeoutMillis: 10000,
+          connectionTimeoutMillis: 5000,
         });
       } catch (e) {
         useMemStore = true;
@@ -39,16 +43,27 @@ export async function query(text: string, params: any[] = []): Promise<QueryResu
         const res = await pgPool.query(text, params);
         return { rows: res.rows, rowCount: res.rowCount || res.rows.length };
       } catch (err: any) {
-        useMemStore = true;
-        if (pgPool) {
-          pgPool.end().catch(() => {});
-          pgPool = null;
+        console.warn('[Database] PostgreSQL query error:', err.message);
+        // Only switch to memory fallback if connection completely failed
+        if (
+          err.code === '28P01' ||
+          err.code === 'ECONNREFUSED' ||
+          err.code === 'ENOTFOUND' ||
+          err.message?.includes('password authentication failed')
+        ) {
+          useMemStore = true;
+          if (pgPool) {
+            pgPool.end().catch(() => {});
+            pgPool = null;
+          }
+        } else {
+          throw err;
         }
       }
     }
   }
 
-  // Pure JS In-Memory execution fallback (Zero native dependencies)
+  // Pure JS In-Memory execution fallback
   const trimmed = text.trim();
   const upper = trimmed.toUpperCase();
 
@@ -56,7 +71,6 @@ export async function query(text: string, params: any[] = []): Promise<QueryResu
     return { rows: [], rowCount: 0 };
   }
 
-  // INSERT statements
   if (upper.startsWith('INSERT INTO')) {
     const tableMatch = trimmed.match(/INSERT INTO\s+([a-z_]+)/i);
     const tableName = tableMatch ? tableMatch[1].toLowerCase() : null;
@@ -100,7 +114,6 @@ export async function query(text: string, params: any[] = []): Promise<QueryResu
         obj.metadata = typeof params[5] === 'string' ? JSON.parse(params[5]) : params[5];
         obj.created_at = new Date();
 
-        // Unique constraint check (tenant_id, idempotency_key)
         const dup = table.find((r) => r.tenant_id === obj.tenant_id && r.idempotency_key === obj.idempotency_key);
         if (dup && upper.includes('ON CONFLICT')) {
           return { rows: [], rowCount: 0 };
@@ -124,7 +137,6 @@ export async function query(text: string, params: any[] = []): Promise<QueryResu
     }
   }
 
-  // UPDATE statements
   if (upper.startsWith('UPDATE')) {
     const tableMatch = trimmed.match(/UPDATE\s+([a-z_]+)/i);
     const tableName = tableMatch ? tableMatch[1].toLowerCase() : null;
@@ -159,7 +171,6 @@ export async function query(text: string, params: any[] = []): Promise<QueryResu
     return { rows: [], rowCount: 0 };
   }
 
-  // SELECT queries
   if (upper.startsWith('SELECT')) {
     const tableMatch = trimmed.match(/FROM\s+([a-z_]+)/i);
     const tableName = tableMatch ? tableMatch[1].toLowerCase() : null;
