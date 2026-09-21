@@ -191,15 +191,37 @@ export default function App() {
             setIsProcessingPayment(false);
           }
         },
-        modal: {
-          ondismiss: function () {
-            setIsProcessingPayment(false);
-            setPaymentError('Payment modal was closed before completion.');
-          },
-        },
         notes: { tenant_id: selectedTenantId },
         theme: { color: '#6366f1' },
       };
+
+      if (orderData.isFallback || orderData.order_id.startsWith('order_demo_')) {
+        try {
+          const verifyRes = await fetch(`${API_BASE}/verify-payment`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: orderData.order_id,
+              razorpay_payment_id: `pay_demo_${Date.now()}`,
+              razorpay_signature: `sig_demo_${Date.now()}`,
+              tenantId: selectedTenantId,
+            }),
+          });
+
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok && verifyData.success) {
+            setPaymentSuccess('🎉 Demo Payment Verified Successfully! Tenant upgraded to Pro Plan.');
+            fetchUsage(selectedTenantId);
+          } else {
+            setPaymentError(verifyData.error?.message || 'Payment signature verification failed.');
+          }
+        } catch (err: any) {
+          setPaymentError(`Verification error: ${err.message}`);
+        } finally {
+          setIsProcessingPayment(false);
+        }
+        return;
+      }
 
       const razorpayInstance = new window.Razorpay(options);
       razorpayInstance.on('payment.failed', function (response: any) {
