@@ -1,0 +1,17 @@
+{
+  "name": "meterforge-monorepo",
+  "version": "1.0.0",
+  "description": "MeterForge Usage Metering & Billing Engine Monorepo (Backend + Demo Frontend)",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -k -p \"[{name}]\" -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start": "npm start --prefix backend",
+    "build": "npm run build --prefix backend && npm run build --prefix frontend",
+    "test": "npm test --prefix backend",
+    "seed": "npm run seed --prefix backend",
+    "migrate": "npm run migrate --prefix backend"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

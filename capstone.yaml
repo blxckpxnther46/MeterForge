@@ -1,0 +1,18 @@
+# FlyRank Capstone Manifest File
+# Project: MeterForge (Usage Metering & Billing Engine)
+# Payment Gateway: Razorpay Test Mode Substitution
+
+run: "npm start"
+seed: "npm run seed"
+test: "npm test"
+base_url: "http://localhost:3000"
+
+endpoints:
+  health: "GET /health"
+  plans: "GET /plans"
+  generate: "POST /generate"
+  usage: "GET /usage?tenantId={tenantId}"
+  checkout: "POST /subscriptions/checkout"
+  subscriptions: "GET /subscriptions?tenantId={tenantId}"
+  cancel_subscription: "POST /subscriptions/cancel"
+  webhooks: "POST /webhooks/razorpay"
