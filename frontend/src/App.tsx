@@ -241,379 +241,382 @@ export default function App() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
-        <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">
-              MeterForge
-            </h1>
-            <span className="text-xs px-2.5 py-1 rounded-full font-semibold bg-indigo-950 text-indigo-300 border border-indigo-800">
-              FlyRank Capstone
-            </span>
-            <span className="text-xs px-2.5 py-1 rounded-full font-semibold bg-emerald-950 text-emerald-300 border border-emerald-800">
-              Razorpay Standard Checkout
-            </span>
-          </div>
-          <p className="text-sm text-slate-400 mt-1">
-            Usage Metering & Billing Engine with Verified Razorpay Checkout
-          </p>
-        </div>
-
-        {/* Tenant Selector */}
-        <div className="flex items-center gap-3 bg-slate-900 p-2 rounded-xl border border-slate-800">
-          <span className="text-xs font-medium text-slate-400 pl-2">Active Tenant:</span>
-          <select
-            value={selectedTenantId}
-            onChange={(e) => setSelectedTenantId(e.target.value)}
-            className="bg-slate-950 text-slate-200 text-sm font-medium py-1.5 px-3 rounded-lg border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            {tenants.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </header>
-
-      {/* Payment Success/Error Banners */}
-      {paymentSuccess && (
-        <div className="mt-6 p-4 rounded-xl bg-emerald-950/70 border border-emerald-800 text-emerald-200 text-sm flex items-center justify-between shadow-lg">
-          <span>{paymentSuccess}</span>
-          <button
-            onClick={() => setPaymentSuccess('')}
-            className="text-xs font-bold text-emerald-400 hover:text-emerald-200 pl-4"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
-      {paymentError && (
-        <div className="mt-6 p-4 rounded-xl bg-rose-950/70 border border-rose-800 text-rose-200 text-sm flex items-center justify-between shadow-lg">
-          <span>⚠️ {paymentError}</span>
-          <button
-            onClick={() => setPaymentError('')}
-            className="text-xs font-bold text-rose-400 hover:text-rose-200 pl-4"
-          >
-            Dismiss
-          </button>
-        </div>
-      )}
-
-      {/* Main Dashboard Grid */}
-      {loading ? (
-        <div className="py-20 text-center text-slate-500">Loading MeterForge Engine...</div>
-      ) : usage ? (
-        <main className="mt-8 space-y-8">
-          {/* Metric Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Plan Badge Card */}
-            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  Current Plan
-                </span>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-3xl font-extrabold text-white">{usage.plan}</span>
-                  <span
-                    className={`text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider ${
-                      usage.plan === 'Pro'
-                        ? 'bg-purple-950 text-purple-300 border border-purple-800'
-                        : 'bg-slate-800 text-slate-300'
-                    }`}
-                  >
-                    {usage.subscriptionStatus}
-                  </span>
-                </div>
-              </div>
-
-              {usage.plan === 'Free' ? (
-                <button
-                  onClick={handleRazorpayStandardCheckout}
-                  disabled={isProcessingPayment}
-                  className="mt-6 w-full py-2.5 px-4 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-semibold rounded-xl text-sm transition-all shadow-lg shadow-indigo-950/50 disabled:opacity-50"
-                >
-                  {isProcessingPayment ? 'Opening Razorpay Modal...' : 'Pay & Upgrade to Pro (₹499)'}
-                </button>
-              ) : (
-                <div className="mt-6 text-xs text-emerald-400 font-medium flex items-center gap-1.5">
-                  ✓ High Quota Limits Active (10,000 API Calls / 1M Tokens)
-                </div>
-              )}
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans antialiased selection:bg-zinc-800 selection:text-zinc-100">
+      <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+        {/* Header */}
+        <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-zinc-800">
+          <div>
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-semibold text-zinc-100 tracking-tight">
+                MeterForge
+              </h1>
+              <span className="text-[11px] px-2 py-0.5 rounded border border-zinc-800 bg-zinc-900 text-zinc-400 font-medium">
+                FlyRank Capstone
+              </span>
+              <span className="text-[11px] px-2 py-0.5 rounded border border-zinc-800 bg-zinc-900 text-zinc-400 font-medium">
+                Razorpay Test Mode
+              </span>
             </div>
-
-            {/* API Calls Usage */}
-            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  API Calls (Monthly)
-                </span>
-                <div className="flex items-baseline justify-between mt-2">
-                  <span className="text-2xl font-bold text-white">
-                    {usage.apiCalls.used.toLocaleString()}
-                  </span>
-                  <span className="text-sm font-medium text-slate-400">
-                    / {usage.apiCalls.limit.toLocaleString()} calls
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
-                  <div
-                    className={`h-full transition-all duration-500 ${
-                      usage.apiCalls.used >= usage.apiCalls.limit
-                        ? 'bg-rose-500'
-                        : usage.apiCalls.used > usage.apiCalls.limit * 0.8
-                        ? 'bg-amber-500'
-                        : 'bg-indigo-500'
-                    }`}
-                    style={{
-                      width: `${Math.min(
-                        100,
-                        (usage.apiCalls.used / usage.apiCalls.limit) * 100
-                      )}%`,
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between text-xs text-slate-500 mt-1.5">
-                  <span>Quota usage</span>
-                  <span>
-                    {((usage.apiCalls.used / usage.apiCalls.limit) * 100).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* AI Tokens Usage */}
-            <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-              <div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                  AI Tokens (Monthly)
-                </span>
-                <div className="flex items-baseline justify-between mt-2">
-                  <span className="text-2xl font-bold text-white">
-                    {usage.aiTokens.used.toLocaleString()}
-                  </span>
-                  <span className="text-sm font-medium text-slate-400">
-                    / {usage.aiTokens.limit.toLocaleString()} tokens
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
-                  <div
-                    className={`h-full transition-all duration-500 ${
-                      usage.aiTokens.used >= usage.aiTokens.limit
-                        ? 'bg-rose-500'
-                        : usage.aiTokens.used > usage.aiTokens.limit * 0.8
-                        ? 'bg-amber-500'
-                        : 'bg-cyan-500'
-                    }`}
-                    style={{
-                      width: `${Math.min(
-                        100,
-                        (usage.aiTokens.used / usage.aiTokens.limit) * 100
-                      )}%`,
-                    }}
-                  />
-                </div>
-                <div className="flex justify-between text-xs text-slate-500 mt-1.5">
-                  <span>
-                    Cost: <strong className="text-slate-200">{usage.cost.formattedINR}</strong>
-                  </span>
-                  <span>
-                    {((usage.aiTokens.used / usage.aiTokens.limit) * 100).toFixed(1)}%
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Metering Simulator */}
-          <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
-            <h2 className="text-lg font-bold text-white mb-1">Interactive Request Simulator</h2>
-            <p className="text-xs text-slate-400 mb-6">
-              Test exact-once idempotency deduplication and real-time quota boundary enforcement
+            <p className="text-xs text-zinc-400 mt-1">
+              Usage Metering & Billing Engine with Verified Razorpay Checkout
             </p>
+          </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="space-y-4">
+          {/* Tenant Selector */}
+          <div className="flex items-center gap-2 bg-zinc-900 px-3 py-1.5 rounded-md border border-zinc-800">
+            <span className="text-xs font-medium text-zinc-400">Active Tenant:</span>
+            <select
+              value={selectedTenantId}
+              onChange={(e) => setSelectedTenantId(e.target.value)}
+              className="bg-zinc-950 text-zinc-200 text-xs font-medium py-1 px-2.5 rounded border border-zinc-700 focus:outline-none focus:border-zinc-500 cursor-pointer"
+            >
+              {tenants.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </header>
+
+        {/* Payment Success/Error Banners */}
+        {paymentSuccess && (
+          <div className="p-3.5 rounded-md bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 text-xs flex items-center justify-between">
+            <span>{paymentSuccess}</span>
+            <button
+              onClick={() => setPaymentSuccess('')}
+              className="text-xs font-medium text-zinc-400 hover:text-zinc-200 pl-4 cursor-pointer"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {paymentError && (
+          <div className="p-3.5 rounded-md bg-rose-950/40 border border-rose-800/60 text-rose-300 text-xs flex items-center justify-between">
+            <span>⚠️ {paymentError}</span>
+            <button
+              onClick={() => setPaymentError('')}
+              className="text-xs font-medium text-zinc-400 hover:text-zinc-200 pl-4 cursor-pointer"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        {/* Main Dashboard Body */}
+        {loading ? (
+          <div className="py-20 text-center text-xs text-zinc-500 font-mono">Loading MeterForge Engine...</div>
+        ) : usage ? (
+          <main className="space-y-6">
+            {/* Metric Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {/* Plan Card */}
+              <div className="bg-zinc-900/60 p-5 rounded-lg border border-zinc-800 flex flex-col justify-between">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                    Usage Type
-                  </label>
-                  <div className="flex gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setSimulatorType('api_call')}
-                      className={`flex-1 py-2 px-4 rounded-xl text-sm font-semibold border transition-all ${
-                        simulatorType === 'api_call'
-                          ? 'bg-indigo-600 border-indigo-500 text-white'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      API Call
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSimulatorType('ai_tokens')}
-                      className={`flex-1 py-2 px-4 rounded-xl text-sm font-semibold border transition-all ${
-                        simulatorType === 'ai_tokens'
-                          ? 'bg-indigo-600 border-indigo-500 text-white'
-                          : 'bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      AI Tokens
-                    </button>
+                  <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                    Current Plan
+                  </span>
+                  <div className="flex items-center justify-between mt-2">
+                    <span className="text-2xl font-bold text-zinc-100">{usage.plan}</span>
+                    <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full font-medium border border-zinc-800 bg-zinc-950 text-zinc-300">
+                      <span className={`w-1.5 h-1.5 rounded-full ${usage.plan === 'Pro' ? 'bg-indigo-400' : 'bg-emerald-400'}`}></span>
+                      {usage.subscriptionStatus}
+                    </span>
                   </div>
                 </div>
 
-                <div>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <label className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                      Idempotency-Key Header
-                    </label>
-                    <button
-                      type="button"
-                      onClick={generateNewKey}
-                      className="text-xs text-indigo-400 hover:underline font-medium"
-                    >
-                      Generate New Key
-                    </button>
+                {usage.plan === 'Free' ? (
+                  <button
+                    onClick={handleRazorpayStandardCheckout}
+                    disabled={isProcessingPayment}
+                    className="mt-5 w-full py-2 px-3 bg-zinc-100 hover:bg-zinc-200 text-zinc-900 font-medium rounded-md text-xs transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
+                  >
+                    {isProcessingPayment ? 'Opening Razorpay Modal...' : 'Pay & Upgrade to Pro (₹499)'}
+                  </button>
+                ) : (
+                  <div className="mt-5 text-xs text-emerald-400 font-medium flex items-center gap-1.5">
+                    ✓ High Quota Limits Active (10,000 API Calls / 1M Tokens)
                   </div>
-                  <input
-                    type="text"
-                    value={idempotencyKey}
-                    onChange={(e) => setIdempotencyKey(e.target.value)}
-                    className="w-full bg-slate-950 text-slate-200 text-sm font-mono py-2 px-3 rounded-xl border border-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
+                )}
+              </div>
+
+              {/* API Calls Usage Card */}
+              <div className="bg-zinc-900/60 p-5 rounded-lg border border-zinc-800 flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                    API Calls (Monthly)
+                  </span>
+                  <div className="flex items-baseline mt-2">
+                    <span className="text-2xl font-bold text-zinc-100">
+                      {usage.apiCalls.used.toLocaleString()}
+                    </span>
+                    <span className="text-xs text-zinc-400 ml-1.5">
+                      / {usage.apiCalls.limit.toLocaleString()} calls
+                    </span>
+                  </div>
                 </div>
 
-                {simulatorType === 'api_call' ? (
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-                      Quantity (API Calls)
-                    </label>
-                    <input
-                      type="number"
-                      value={quantity}
-                      onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                      className="w-full bg-slate-950 text-slate-200 text-sm font-mono py-2 px-3 rounded-xl border border-slate-800"
+                <div className="mt-5">
+                  <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden border border-zinc-800/80">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        usage.apiCalls.used >= usage.apiCalls.limit
+                          ? 'bg-rose-500'
+                          : usage.apiCalls.used > usage.apiCalls.limit * 0.8
+                          ? 'bg-amber-500'
+                          : 'bg-indigo-500'
+                      }`}
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          (usage.apiCalls.used / usage.apiCalls.limit) * 100
+                        )}%`,
+                      }}
                     />
                   </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-3 pt-1">
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                        Input Tokens (₹0.15/1k)
-                      </label>
-                      <input
-                        type="number"
-                        value={inputTokens}
-                        onChange={(e) => setInputTokens(Number(e.target.value))}
-                        className="w-full bg-slate-950 text-slate-200 text-xs font-mono py-2 px-2.5 rounded-lg border border-slate-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                        Cached Input (75% discount)
-                      </label>
-                      <input
-                        type="number"
-                        value={cachedInputTokens}
-                        onChange={(e) => setCachedInputTokens(Number(e.target.value))}
-                        className="w-full bg-slate-950 text-slate-200 text-xs font-mono py-2 px-2.5 rounded-lg border border-slate-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                        Output Tokens (₹0.60/1k)
-                      </label>
-                      <input
-                        type="number"
-                        value={outputTokens}
-                        onChange={(e) => setOutputTokens(Number(e.target.value))}
-                        className="w-full bg-slate-950 text-slate-200 text-xs font-mono py-2 px-2.5 rounded-lg border border-slate-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1">
-                        Reasoning Tokens (Output rate)
-                      </label>
-                      <input
-                        type="number"
-                        value={reasoningTokens}
-                        onChange={(e) => setReasoningTokens(Number(e.target.value))}
-                        className="w-full bg-slate-950 text-slate-200 text-xs font-mono py-2 px-2.5 rounded-lg border border-slate-800"
-                      />
-                    </div>
+                  <div className="flex justify-between text-xs text-zinc-500 mt-2 font-mono">
+                    <span>Quota usage</span>
+                    <span>
+                      {((usage.apiCalls.used / usage.apiCalls.limit) * 100).toFixed(1)}%
+                    </span>
                   </div>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleSimulateRequest}
-                  className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-all shadow-lg shadow-indigo-950/50 mt-4"
-                >
-                  Send POST /generate Request
-                </button>
+                </div>
               </div>
 
-              {/* Response Preview */}
-              <div className="bg-slate-950 rounded-xl border border-slate-800 p-4 flex flex-col justify-between">
+              {/* AI Tokens Usage Card */}
+              <div className="bg-zinc-900/60 p-5 rounded-lg border border-zinc-800 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                      Backend HTTP Response
+                  <span className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                    AI Tokens (Monthly)
+                  </span>
+                  <div className="flex items-baseline mt-2">
+                    <span className="text-2xl font-bold text-zinc-100">
+                      {usage.aiTokens.used.toLocaleString()}
                     </span>
-                    {lastResponse && (
-                      <span
-                        className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
-                          lastResponse.status === 201
-                            ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                            : lastResponse.status === 200
-                            ? 'bg-cyan-950 text-cyan-300 border border-cyan-800'
-                            : lastResponse.status === 429
-                            ? 'bg-rose-950 text-rose-300 border border-rose-800'
-                            : 'bg-amber-950 text-amber-300 border border-amber-800'
-                        }`}
-                      >
-                        HTTP {lastResponse.status}{' '}
-                        {lastResponse.status === 201
-                          ? 'Created'
-                          : lastResponse.status === 200
-                          ? 'OK (Duplicate)'
-                          : lastResponse.status === 429
-                          ? 'Quota Exceeded'
-                          : 'Payment Required'}
-                      </span>
-                    )}
+                    <span className="text-xs text-zinc-400 ml-1.5">
+                      / {usage.aiTokens.limit.toLocaleString()} tokens
+                    </span>
                   </div>
-
-                  <pre className="mt-4 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">
-                    {lastResponse
-                      ? JSON.stringify(lastResponse.data, null, 2)
-                      : '// Click "Send POST /generate Request" to view live response'}
-                  </pre>
                 </div>
 
-                {lastResponse?.data?.duplicate && (
-                  <div className="mt-4 p-2.5 rounded-lg bg-cyan-950/50 border border-cyan-800 text-[11px] text-cyan-200">
-                    ⚡ <strong>Idempotency Enforced:</strong> Duplicate idempotency key detected. Original result returned without creating duplicate usage event.
+                <div className="mt-5">
+                  <div className="w-full bg-zinc-950 h-1.5 rounded-full overflow-hidden border border-zinc-800/80">
+                    <div
+                      className={`h-full transition-all duration-300 ${
+                        usage.aiTokens.used >= usage.aiTokens.limit
+                          ? 'bg-rose-500'
+                          : usage.aiTokens.used > usage.aiTokens.limit * 0.8
+                          ? 'bg-amber-500'
+                          : 'bg-cyan-500'
+                      }`}
+                      style={{
+                        width: `${Math.min(
+                          100,
+                          (usage.aiTokens.used / usage.aiTokens.limit) * 100
+                        )}%`,
+                      }}
+                    />
                   </div>
-                )}
+                  <div className="flex justify-between text-xs text-zinc-500 mt-2 font-mono">
+                    <span>
+                      Cost: <strong className="text-zinc-300 font-normal">{usage.cost.formattedINR}</strong>
+                    </span>
+                    <span>
+                      {((usage.aiTokens.used / usage.aiTokens.limit) * 100).toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </main>
-      ) : (
-        <div className="py-20 text-center text-slate-500">No tenant usage data found.</div>
-      )}
+
+            {/* Metering Simulator Card */}
+            <div className="bg-zinc-900/60 p-6 rounded-lg border border-zinc-800">
+              <div className="mb-6 pb-4 border-b border-zinc-800/80">
+                <h2 className="text-sm font-semibold text-zinc-100">Interactive Request Simulator</h2>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Test exact-once idempotency deduplication and real-time quota boundary enforcement
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Simulator Form Controls */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wider mb-2">
+                      Usage Type
+                    </label>
+                    <div className="flex rounded-md bg-zinc-950 p-1 border border-zinc-800/80">
+                      <button
+                        type="button"
+                        onClick={() => setSimulatorType('api_call')}
+                        className={`flex-1 py-1.5 px-3 rounded text-xs font-medium transition-colors cursor-pointer ${
+                          simulatorType === 'api_call'
+                            ? 'bg-zinc-800 text-zinc-100 shadow-sm'
+                            : 'text-zinc-400 hover:text-zinc-200'
+                        }`}
+                      >
+                        API Call
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSimulatorType('ai_tokens')}
+                        className={`flex-1 py-1.5 px-3 rounded text-xs font-medium transition-colors cursor-pointer ${
+                          simulatorType === 'ai_tokens'
+                            ? 'bg-zinc-800 text-zinc-100 shadow-sm'
+                            : 'text-zinc-400 hover:text-zinc-200'
+                        }`}
+                      >
+                        AI Tokens
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                        Idempotency-Key Header
+                      </label>
+                      <button
+                        type="button"
+                        onClick={generateNewKey}
+                        className="text-[11px] text-indigo-400 hover:text-indigo-300 font-mono cursor-pointer"
+                      >
+                        Generate New Key
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={idempotencyKey}
+                      onChange={(e) => setIdempotencyKey(e.target.value)}
+                      className="w-full bg-zinc-950 text-zinc-200 text-xs font-mono py-2 px-3 rounded-md border border-zinc-800 focus:outline-none focus:border-zinc-700 focus:ring-1 focus:ring-zinc-700"
+                    />
+                  </div>
+
+                  {simulatorType === 'api_call' ? (
+                    <div>
+                      <label className="block text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1.5">
+                        Quantity (API Calls)
+                      </label>
+                      <input
+                        type="number"
+                        value={quantity}
+                        onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-full bg-zinc-950 text-zinc-200 text-xs font-mono py-2 px-3 rounded-md border border-zinc-800 focus:outline-none focus:border-zinc-700"
+                      />
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div>
+                        <label className="block text-[11px] font-medium text-zinc-400 mb-1">
+                          Input Tokens (₹0.15/1k)
+                        </label>
+                        <input
+                          type="number"
+                          value={inputTokens}
+                          onChange={(e) => setInputTokens(Number(e.target.value))}
+                          className="w-full bg-zinc-950 text-zinc-200 text-xs font-mono py-1.5 px-2.5 rounded-md border border-zinc-800 focus:outline-none focus:border-zinc-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-medium text-zinc-400 mb-1">
+                          Cached Input (75% discount)
+                        </label>
+                        <input
+                          type="number"
+                          value={cachedInputTokens}
+                          onChange={(e) => setCachedInputTokens(Number(e.target.value))}
+                          className="w-full bg-zinc-950 text-zinc-200 text-xs font-mono py-1.5 px-2.5 rounded-md border border-zinc-800 focus:outline-none focus:border-zinc-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-medium text-zinc-400 mb-1">
+                          Output Tokens (₹0.60/1k)
+                        </label>
+                        <input
+                          type="number"
+                          value={outputTokens}
+                          onChange={(e) => setOutputTokens(Number(e.target.value))}
+                          className="w-full bg-zinc-950 text-zinc-200 text-xs font-mono py-1.5 px-2.5 rounded-md border border-zinc-800 focus:outline-none focus:border-zinc-700"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-medium text-zinc-400 mb-1">
+                          Reasoning Tokens (Output rate)
+                        </label>
+                        <input
+                          type="number"
+                          value={reasoningTokens}
+                          onChange={(e) => setReasoningTokens(Number(e.target.value))}
+                          className="w-full bg-zinc-950 text-zinc-200 text-xs font-mono py-1.5 px-2.5 rounded-md border border-zinc-800 focus:outline-none focus:border-zinc-700"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleSimulateRequest}
+                    className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-md text-xs transition-colors shadow-sm mt-4 cursor-pointer"
+                  >
+                    Send POST /generate Request
+                  </button>
+                </div>
+
+                {/* Developer Response Viewer */}
+                <div className="bg-zinc-950 rounded-lg border border-zinc-800/80 p-4 flex flex-col justify-between font-mono">
+                  <div>
+                    <div className="flex items-center justify-between pb-3 border-b border-zinc-800/80">
+                      <span className="text-[11px] font-mono text-zinc-400 uppercase tracking-wider">
+                        Backend HTTP Response
+                      </span>
+                      {lastResponse && (
+                        <span
+                          className={`text-[11px] px-2 py-0.5 rounded font-mono font-medium border ${
+                            lastResponse.status === 201
+                              ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800/80'
+                              : lastResponse.status === 200
+                              ? 'bg-cyan-950/60 text-cyan-400 border-cyan-800/80'
+                              : lastResponse.status === 429
+                              ? 'bg-rose-950/60 text-rose-400 border-rose-800/80'
+                              : 'bg-amber-950/60 text-amber-400 border-amber-800/80'
+                          }`}
+                        >
+                          HTTP {lastResponse.status}{' '}
+                          {lastResponse.status === 201
+                            ? 'Created'
+                            : lastResponse.status === 200
+                            ? 'OK (Duplicate)'
+                            : lastResponse.status === 429
+                            ? 'Quota Exceeded'
+                            : 'Payment Required'}
+                        </span>
+                      )}
+                    </div>
+
+                    <pre className="mt-3 text-xs font-mono text-zinc-300 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-[280px] select-all">
+                      {lastResponse
+                        ? JSON.stringify(lastResponse.data, null, 2)
+                        : '// Click "Send POST /generate Request" to view live response'}
+                    </pre>
+                  </div>
+
+                  {lastResponse?.data?.duplicate && (
+                    <div className="mt-3 p-2.5 rounded bg-cyan-950/30 border border-cyan-800/50 text-[11px] font-sans text-cyan-300 flex items-start gap-2">
+                      <span>⚡</span>
+                      <span>
+                        <strong>Idempotency Enforced:</strong> Duplicate idempotency key detected. Original result returned without creating duplicate usage event.
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </main>
+        ) : (
+          <div className="py-20 text-center text-xs text-zinc-500 font-mono">No tenant usage data found.</div>
+        )}
+      </div>
     </div>
   );
 }
